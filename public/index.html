@@ -1,92 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>ACI Joint Shear</title>
+      <link rel="stylesheet" href="./css/main.css" type="text/css" />
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+      <!-- Semantic UI -->
+      <!-- <script src="https://dev.skyciv.com/assets/res/semantic/semantic.min.js"></script> -->
+      <!-- <link href="https://dev.skyciv.com/assets/res/semantic/semantic.min.css" rel="stylesheet" type="text/css" /> -->
+      <script src="/js/semantic.min.js" type="text/javascript"></script>
+      <link rel="stylesheet" href="/css/semantic.min.css" type="text/css" />
+      <!-- SKYCIV UTILS -->
+      <!-- <script src="https://dev.skyciv.com/assets/js/utils-dev-c4gLQ5B4xGNcLcvu.min.js"></script> -->
+      <!-- SKYCIV ENTRY TABLES -->
+      <!-- <script src="https://dev.skyciv.com/assets/res/entry-table/entry-table-c4gLQ5B4xGNcLcvu.min.js"></script> -->
+      <!-- <link rel="stylesheet" type="text/css" href="https://dev.skyciv.com/assets/res/entry-table/entry-table.css" /> -->
+   </head>
 
-<head>
-   <meta charset="UTF-8" />
-   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>ACI Joint Shear</title>
-   <link rel="stylesheet" href="./css/main.css" type="text/css" />
-   <!-- jQuery -->
-   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-   <!-- Semantic UI -->
-   <!-- <script src="https://dev.skyciv.com/assets/res/semantic/semantic.min.js"></script> -->
-   <!-- <link href="https://dev.skyciv.com/assets/res/semantic/semantic.min.css" rel="stylesheet" type="text/css" /> -->
-   <script src="./js/semantic.min.js" type="text/javascript"></script>
-   <link rel="stylesheet" href="./css/semantic.min.css" type="text/css" />
-   <!-- SKYCIV UTILS -->
-   <!-- <script src="https://dev.skyciv.com/assets/js/utils-dev-c4gLQ5B4xGNcLcvu.min.js"></script> -->
-   <!-- SKYCIV ENTRY TABLES -->
-   <!-- <script src="https://dev.skyciv.com/assets/res/entry-table/entry-table-c4gLQ5B4xGNcLcvu.min.js"></script> -->
-   <!-- <link rel="stylesheet" type="text/css" href="https://dev.skyciv.com/assets/res/entry-table/entry-table.css" /> -->
-</head>
-
-<body>
-   <main class="ui grid">
-      <div class="six wide column">
-         <nav id="main-menu" class="ui large three item pointing menu">
-            <div class="item">Details</div>
-            <div class="item">Loads</div>
-            <div class="item">Results</div>
-         </nav>
-         <div id="sub-menu" class="ui form segment">
-            <div class="field">
-               <div class="ui labeled input">
-                  <div class="ui label">Joint Type</div>
-                  <select disabled name="joint-type" id="joint-type" class="ui dropdown">
-                     <option selected value="1">Type 1</option>
-                     <option value="2">Type 2</option>
-                  </select>
-               </div>
-            </div>
-            <div class="field">
-               <div class="ui labeled input">
-                  <div class="ui label">Column Type</div>
-                  <select name="column-type" id="column-type" class="ui dropdown">
-                     <option selected value="int">Interior</option>
-                     <option value="ext">Exterior</option>
-                  </select>
-               </div>
-            </div>
-            <div class="two fields">
+   <body>
+      <main class="ui grid">
+         <div class="six wide column">
+            <nav id="main-menu" class="ui large three item pointing menu">
+               <div class="item">Details</div>
+               <div class="item">Loads</div>
+               <div class="item">Results</div>
+            </nav>
+            <div id="sub-menu" class="ui form segment">
                <div class="field">
                   <div class="ui labeled input">
-                     <div class="ui label">Input</div>
-                     <input type="text" />
+                     <div class="ui label">Joint Type</div>
+                     <select disabled name="joint-type" id="joint-type" class="ui dropdown">
+                        <option selected value="1">Type 1</option>
+                        <option value="2">Type 2</option>
+                     </select>
                   </div>
                </div>
                <div class="field">
                   <div class="ui labeled input">
-                     <div class="ui label">Input</div>
-                     <input type="text" />
+                     <div class="ui label">Column Type</div>
+                     <select name="column-type" id="column-type" class="ui dropdown">
+                        <option selected value="int">Interior</option>
+                        <option value="ext">Exterior</option>
+                     </select>
                   </div>
                </div>
-            </div>
-            <div class="two fields">
-               <div class="field">
-                  <div class="ui labeled input">
-                     <div class="ui label">Input</div>
-                     <input type="text" />
+               <div class="two fields">
+                  <div class="field">
+                     <div class="ui labeled input">
+                        <div class="ui label">Input</div>
+                        <input type="text" />
+                     </div>
+                  </div>
+                  <div class="field">
+                     <div class="ui labeled input">
+                        <div class="ui label">Input</div>
+                        <input type="text" />
+                     </div>
                   </div>
                </div>
-               <div class="field">
-                  <div class="ui labeled input">
-                     <div class="ui label">Input</div>
-                     <input type="text" />
+               <div class="two fields">
+                  <div class="field">
+                     <div class="ui labeled input">
+                        <div class="ui label">Input</div>
+                        <input type="text" />
+                     </div>
+                  </div>
+                  <div class="field">
+                     <div class="ui labeled input">
+                        <div class="ui label">Input</div>
+                        <input type="text" />
+                     </div>
                   </div>
                </div>
             </div>
          </div>
-      </div>
 
-      <div id="display-content" class="ten wide column">
-         <div class="ui segment">
-            <img class="ui small image" src="/images/wireframe/image.png">
+         <div id="display-content" class="ten wide column">
+            <div class="ui segment">
+               <img class="ui small image" src="/images/wireframe/image.png" />
+            </div>
          </div>
-      </div>
-   </main>
-
-</body>
-<script src="./js/main.js" type="text/javascript"></script>
-
+      </main>
+   </body>
+   <script src="/js/main.js" type="text/javascript"></script>
 </html>

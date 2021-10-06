@@ -4,7 +4,8 @@
   "description": "aci beam-column joint app",
   "main": "init.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node init"
   },
   "repository": {
     "type": "git",

@@ -12,22 +12,12 @@ app.listen(port, function () {
 });
 
 // Serve some directories
-app.use('/css', express.static(__dirname + '/css'));
-app.use('/images', express.static(__dirname + '/images'));
-app.use('/js', express.static(__dirname + '/js'));
-app.use('/contents', express.static(__dirname + '/views/contents'));
+app.use('/css', express.static(__dirname + '/public/css'));
+app.use('/img', express.static(__dirname + '/public/img'));
+app.use('/js', express.static(__dirname + '/public/js'));
 
-// added temporary image directory: 10 Sep 2020
-app.use('/img', express.static(__dirname + '/img'));
 // Serve main local dev entry HTML file
-app.use('/compiled.html', express.static(__dirname + '/compiled.html'));
-
-// temp dir
-app.use('/temp', express.static(__dirname + '/temp'));
-app.use('/canvas', express.static(__dirname + '/temp/canvas.temp.html'));
-
-// ref dir for loading local results file: 06 Aug 2021
-app.use('/results', express.static(`${__dirname}/ref/results_obj`));
+app.use('/', express.static(__dirname + '/public'));
 
 // Auto-open in browser
 // var start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
@@ -40,4 +30,4 @@ if (process.platform == "win32") {
 
 // Kill browser upon node exit
 process.on('exit', () => child_process.exec(kill_comm));
-child_process.exec(start + ' ' + url + '/compiled.html');
+child_process.exec(start + ' ' + url);
