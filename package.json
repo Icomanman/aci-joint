@@ -1,0 +1,28 @@
+{
+  "name": "skyciv-hackathon-21",
+  "version": "1.0.0",
+  "description": "aci beam-column joint app",
+  "main": "init.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Icomanman/skyciv-hackathon-21.git"
+  },
+  "keywords": [
+    "aci",
+    "beam",
+    "coluumn",
+    "concrete",
+    "calculations",
+    "civil",
+    "engineering"
+  ],
+  "author": "Mico Dalistan",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Icomanman/skyciv-hackathon-21/issues"
+  },
+  "homepage": "https://github.com/Icomanman/skyciv-hackathon-21#readme"
+}
