@@ -1,4 +1,5 @@
 import { upperCase } from "./helpers.mjs";
+import { detailsMenu, loadsMenu, resultsMenu } from "./views/views.mjs";
 
 export function navMenu(menu_name, classes) {
     // nav menu item entry component
@@ -6,7 +7,7 @@ export function navMenu(menu_name, classes) {
         name: menu_name,
         data: function () {
             return {
-                active_item: 'default',
+                active_item: 'details',
                 entries: ACI.nav_items
             }
         },
@@ -14,9 +15,9 @@ export function navMenu(menu_name, classes) {
             upperCase: upperCase
         },
         methods: {
-            activateItem: function (item) {
-                this.active_item = item;
-                this.$emit('nav_selection', item);
+            activateItem: function (selected) {
+                this.active_item = selected;
+                ACI.v_EVENT.$emit('nav_selection', { val: selected });
             }
         },
         template: `
@@ -32,6 +33,24 @@ export function navMenu(menu_name, classes) {
     return component_options;
 }
 
-export function subMenu() {
-
+export function subMenu(submenu_name) {
+    const component_options = {
+        components: {
+            details_comp: detailsMenu(),
+            loads_comp: loadsMenu(),
+            results_comp: resultsMenu()
+        },
+        data: function () {
+            return {
+            }
+        },
+        template: `
+        <form id="${submenu_name}-menu" class="ui form" onsubmit="return false">
+            <template v-if="'${submenu_name}' == 'loads'"><loads_comp/></template>
+            <template v-else-if="'${submenu_name}' == 'results'"><results_comp/></template>
+            <template v-else><details_comp/></template>
+        </form>
+        `
+    };
+    return component_options;
 }

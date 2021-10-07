@@ -6,13 +6,15 @@ function App() {
 
     // UI Controls: #dc-input-panel (Vue Root)
     (function () {
-        const { navMenu } = ACI.UI;
+        const { navMenu, subMenu } = ACI.UI;
         const vue_options = {
             components: {
-                // proj_det: tabComponent("project"),
-
                 // nav menu items
-                nav_menu: navMenu('main-menu', 'ui large three item pointing menu')
+                nav_menu: navMenu('main-menu', 'ui large three item pointing menu'),
+                // submenu:
+                details_menu: subMenu('details'),
+                loads_menu: subMenu('loads'),
+                results_menu: subMenu('results')
             },
             data: function () {
                 return {
@@ -20,20 +22,24 @@ function App() {
                         details: true, // open by default
                         loads: false,
                         results: false
-                    }
+                    },
+                    submenus: ACI.nav_items
                 };
             },
             el: "#app",
             methods: {
-                selectItem(item_name) {
-                    const comps = Object.keys(this.is_open);
-                    for (var i = 0; i < comps.length; i++) {
-                        this.is_open[comps[i]] = comps[i].match(item_name) ? !this.is_open[comps[i]] : false;
-                    };
+                selectItem(evt) {
+                    const entries = Object.keys(this.is_open);
+                    entries.forEach(entry => {
+                        this.is_open[entry] = entry === evt['val'] ? true : false
+                    });
                 }
             },
             mounted: function () {
                 console.log(`> ACI.v_UI mounted.`);
+                ACI.v_EVENT.$on('nav_selection', evt => {
+                    this.selectItem(evt);
+                });
             },
             name: "aci-vue-app"
         };

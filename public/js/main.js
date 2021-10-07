@@ -12,14 +12,7 @@ function initUI() {
     jQuery('#column-type').dropdown();
 }
 
-// // Alternative to DOMContentLoaded event
-// document.onreadystatechange = function () {
-//     if (document.readyState === 'interactive') {
-//         debugger;
-//     }
-// }
-
 jQuery(document).ready(function () {
-    initUI();
     App();
+    initUI();
 });

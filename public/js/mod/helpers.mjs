@@ -1,3 +1,4 @@
+
 export function upperCase(word) {
     var new_word = "";
     for (var i = 0; i < word.length; i++) {
@@ -8,4 +9,4 @@ export function upperCase(word) {
         }
     };
     return new_word;
-};
+}
