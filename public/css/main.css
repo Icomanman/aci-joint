@@ -1,4 +1,9 @@
 
+.column .label{
+    text-align: center !important;
+    align-content: center !important;
+}
+
 #display-content{
     height: 100%;
     min-height: 480px !important;
