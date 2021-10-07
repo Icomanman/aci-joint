@@ -10,6 +10,7 @@ const ACI = (function () {
         results: {}
     };
     j.nav_items = ['details', 'loads', 'results'];
+    j.results = [];
     return j;
 })();
 

@@ -184,7 +184,7 @@ export function resultsMenu() {
     const component_options = {
         data: function () {
             return {
-                results: []
+                results: ACI.results
             }
         },
         template: `
@@ -193,9 +193,9 @@ export function resultsMenu() {
                 <slot></slot>
                 <result_comp :results="results" :key="index"/>
             </div>
-            <div v-else class="ui centered grid" style="min-height: 80px; padding-top: 20px">
+            <div v-else class="ui centered grid" style="min-height: 80px; padding-top: 5px">
                 <div class="row">
-                   <h4>Results not yet available</h4>
+                    <button class="ui black button">Run Analysis Check</button>
                 </div>
             </div> 
         </div>
