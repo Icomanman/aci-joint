@@ -44,9 +44,10 @@ export function subMenu(submenu_name) {
             return {
             }
         },
+        props: { shared: Object },
         template: `
         <form id="${submenu_name}-menu" class="ui form" onsubmit="return false">
-            <template v-if="'${submenu_name}' == 'loads'"><loads_comp/></template>
+            <template v-if="'${submenu_name}' == 'loads'"><loads_comp :shared="shared"/></template>
             <template v-else-if="'${submenu_name}' == 'results'"><results_comp/></template>
             <template v-else><details_comp/></template>
         </form>

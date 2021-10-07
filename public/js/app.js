@@ -23,7 +23,8 @@ function App() {
                         loads: false,
                         results: false
                     },
-                    submenus: ACI.nav_items
+                    submenus: ACI.nav_items,
+                    shared: ACI.UI.data
                 };
             },
             el: "#app",

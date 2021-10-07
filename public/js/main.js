@@ -2,6 +2,13 @@
 const ACI = (function () {
     const j = {};
     j.UI = {};
+    j.UI.data = {
+        details: {
+            beams: [1, 2, 3] // default
+        },
+        loads: {},
+        results: {}
+    };
     j.nav_items = ['details', 'loads', 'results'];
     return j;
 })();
