@@ -18,7 +18,7 @@ export function detailsMenu() {
         methods: {
             updateValue: function (evt, key) {
                 const val = evt.target.value;
-                dat[key] = val;
+                dat[key] = isNaN(Number(val)) ? val : parseFloat(val);
                 if (key === 'column_type') {
                     this.beams = val === 'ext' ? [1, 2, 3] : [1, 2, 3, 4];
                     dat.beams = this.beams;
@@ -150,7 +150,7 @@ export function loadsMenu() {
         methods: {
             updateValue: function (evt, key) {
                 const val = evt.target.value;
-                dat[key] = val;
+                dat[key] = isNaN(Number(val)) ? val : parseFloat(val);
             }
         },
         props: { shared: Object },
@@ -213,6 +213,13 @@ export function resultsMenu() {
                 results: []
             }
         },
+        methods: {
+            runCalcs: function () {
+                const results = ACI.calcs(ACI.UI.data);
+                Object.assign(ACI.results, { ...results });
+                this.results.push(results);
+            }
+        },
         template: `
         <div>
             <div v-if="results.length > 0" class="ui relaxed divided list">
@@ -221,7 +228,7 @@ export function resultsMenu() {
             </div>
             <div v-else class="ui centered grid" style="min-height: 80px; padding-top: px">
                 <div class="row">
-                    <button class="ui black button">Run Analysis Check</button>
+                    <button class="ui black button" @click="runCalcs">Run Analysis Check</button>
                 </div>
             </div> 
         </div>
