@@ -30,7 +30,10 @@ export function detailsMenu() {
             <div class="field">
                 <div class="ui labeled input">
                     <div class="ui label">Joint Type</div>
-                    <select disabled name="joint-type" id="joint-type" 
+                    <select
+                        disabled
+                        name="joint-type"
+                        id="joint-type"
                         class="ui dropdown"
                         v-model="joint_type"
                         @change="updateValue">
@@ -42,9 +45,12 @@ export function detailsMenu() {
             <div class="field">
                 <div class="ui labeled input">
                     <div class="ui label">Column Type</div>
-                    <select disabled name="column-type" id="column-type" 
-                        class="ui dropdown" 
-                        v-model="column_type" 
+                    <select
+                        disabled
+                        name="column-type"
+                        id="column-type"
+                        class="ui dropdown"
+                        v-model="column_type"
                         @change="updateValue($event, 'column_type')">
                         <option selected value="int">Interior</option>
                         <option value="ext">Exterior</option>
@@ -55,22 +61,41 @@ export function detailsMenu() {
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">f'c, ksi</div>
-                        <input type="text" v-model.lazy="fc" @change="updateValue($event, 'fc')"/>
+                        <input type="text" v-model.lazy="fc" @change="updateValue($event, 'fc')" />
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">fy, ksi</div>
-                        <input type="text" v-model.lazy="fy" @change="updateValue($event, 'fy')"/>
+                        <input type="text" v-model.lazy="fy" @change="updateValue($event, 'fy')" />
                     </div>
                 </div>
+            </div>
+
+            <h4 class="ui dividing header">Beam Reinforcements</h4>
+            <div class="ui centered grid">
+                <div class="two column row">
+                    <div class="column">
+                        <div v-for="beam in beams" :key="'As-' + beam">
+                            <div class="fields">
+                                <div class="ui labeled input">
+                                    <div class="ui label">A<sub>s{{beam}}</sub>, in<sup>2</sup></div>
+                                    <input :name="'As' + beam" type="text" @change="updateValue($event, 'As' + beam)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column" style="padding-left: 23%">
+                        <img class="ui tiny image" src="/img/beam-sec.jpg" />
+                    </div>
                 </div>
-                <div class="ui centered grid">
                 <div class="row">
                     <button class="ui black button">Extract Geometry from S3D</button>
                 </div>
             </div>
+
             <div class="ui horizontal divider">Or</div>
+
             <h4 class="ui dividing header">Beam Dimensions</h4>
             <div class="two fields" v-for="beam in beams" :key="beam">
                 <div class="field">
@@ -82,7 +107,7 @@ export function detailsMenu() {
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">h<sub>{{beam}}</sub>, in</div>
-                        <input :name="'h' + beam" type="text" @change="updateValue($event, 'h' + beam)"/>
+                        <input :name="'h' + beam" type="text" @change="updateValue($event, 'h' + beam)" />
                     </div>
                 </div>
             </div>
@@ -97,7 +122,7 @@ export function detailsMenu() {
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">h<sub>c</sub>, in</div>
-                        <input name="hc" type="text" @change="updateValue($event, 'hc')"/>
+                        <input name="hc" type="text" @change="updateValue($event, 'hc')" />
                     </div>
                 </div>
             </div>
@@ -109,6 +134,7 @@ export function detailsMenu() {
 }
 
 export function loadsMenu() {
+    const dat = ACI.UI.data.loads;
     const component_options = {
         computed: {
             beams: function () {
@@ -184,7 +210,7 @@ export function resultsMenu() {
     const component_options = {
         data: function () {
             return {
-                results: ACI.results
+                results: []
             }
         },
         template: `
@@ -193,7 +219,7 @@ export function resultsMenu() {
                 <slot></slot>
                 <result_comp :results="results" :key="index"/>
             </div>
-            <div v-else class="ui centered grid" style="min-height: 80px; padding-top: 5px">
+            <div v-else class="ui centered grid" style="min-height: 80px; padding-top: px">
                 <div class="row">
                     <button class="ui black button">Run Analysis Check</button>
                 </div>

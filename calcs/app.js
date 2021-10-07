@@ -1,4 +1,7 @@
 
+const fs = require('fs');
+const INPUT = fs.readFileSync(`${__dirname}/input.json`, 'utf-8');
+
 function main(input) {
     const PHI = 0.75;
     const covered = {
@@ -29,6 +32,6 @@ function main(input) {
 
     const ecc = [];
     const m = ecc.forEach(e => (col_width / 8) ? 0.3 : 0.5);
-
+    const Vu = 1;
 
 }
