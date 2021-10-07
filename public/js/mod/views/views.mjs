@@ -3,6 +3,7 @@ export function detailsMenu() {
     const dat = ACI.UI.data.details;
     // init
     dat.joint_type = 1;
+    dat.column_type = 'ext';
 
     const component_options = {
         data: function () {
@@ -41,7 +42,7 @@ export function detailsMenu() {
             <div class="field">
                 <div class="ui labeled input">
                     <div class="ui label">Column Type</div>
-                    <select name="column-type" id="column-type" 
+                    <select disabled name="column-type" id="column-type" 
                         class="ui dropdown" 
                         v-model="column_type" 
                         @change="updateValue($event, 'column_type')">
@@ -71,17 +72,17 @@ export function detailsMenu() {
             </div>
             <div class="ui horizontal divider">Or</div>
             <h4 class="ui dividing header">Beam Dimensions</h4>
-            <div class="two fields" v-for="(beam, index) in beams" :key="beam">
+            <div class="two fields" v-for="beam in beams" :key="beam">
                 <div class="field">
                     <div class="ui labeled input">
-                        <div class="ui label">b<sub>{{index + 1}}</sub>, in</div>
-                        <input :name="'b' + (index + 1)" type="text" @change="updateValue($event, 'b' + (index + 1))" />
+                        <div class="ui label">b<sub>{{beam}}</sub>, in</div>
+                        <input :name="'b' + beam" type="text" @change="updateValue($event, 'b' + beam)" />
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui labeled input">
-                        <div class="ui label">h<sub>{{index + 1}}</sub>, in</div>
-                        <input :name="'h' + (index + 1)" type="text" @change="updateValue($event, 'h' + (index + 1))"/>
+                        <div class="ui label">h<sub>{{beam}}</sub>, in</div>
+                        <input :name="'h' + beam" type="text" @change="updateValue($event, 'h' + beam)"/>
                     </div>
                 </div>
             </div>
@@ -111,13 +112,19 @@ export function loadsMenu() {
     const component_options = {
         computed: {
             beams: function () {
-                const beams_arr = this.shared.details.beams;
+                const beams_arr = (this.shared.details.beams).length == 4 ? [1, 2, 3, 4] : [1, 2];
                 return beams_arr;
+            }
+        },
+        data: function () {
+            return {
+                columns: [3, 4] // default, top and bottom
             }
         },
         methods: {
             updateValue: function (evt, key) {
-
+                const val = evt.target.value;
+                dat[key] = val;
             }
         },
         props: { shared: Object },
@@ -130,32 +137,40 @@ export function loadsMenu() {
             </div>
             <div class="ui horizontal divider">Or</div>
             <h4 class="ui dividing header">Beam Loads</h4>
-            <div class="two fields" v-for="(beam, index) in beams" :key="beam">
+            <div class="two fields" v-for="beam in beams" :key="beam">
                 <div class="field">
                     <div class="ui labeled input">
-                        <div class="ui label">V<sub>{{index + 1}}</sub>, kips</div>
-                        <input :name="'V' + (index + 1)" type="text" @change="updateValue($event, 'b' + (index + 1))" />
+                        <div class="ui label">V<sub>{{beam}}</sub>, kips</div>
+                        <input :name="'V' + beam" type="text" @change="updateValue($event, 'V' + beam)" />
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui labeled input">
-                        <div class="ui label">M<sub>{{index + 1}}</sub>, kips-in</div>
-                        <input :name="'M' + (index + 1)" type="text" @change="updateValue($event, 'h' + (index + 1))"/>
+                        <div class="ui label">M<sub>{{beam}}</sub>, kips-in</div>
+                        <input :name="'M' + beam" type="text" @change="updateValue($event, 'M' + beam)"/>
                     </div>
                 </div>
             </div>
             <h4 class="ui dividing header">Column Loads</h4>
-            <div class="two fields">
+            <div class="two fields" v-for="column in columns" :key="column">
                 <div class="field">
                     <div class="ui labeled input">
-                        <div class="ui label">b<sub>c</sub>, in</div>
-                        <input name="bc" type="text" />
+                        <div class="ui label">V<sub>{{column}}</sub>, kips</div>
+                        <input :name="'V' + column" type="text" @change="updateValue($event, 'V' + column)" />
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui labeled input">
-                        <div class="ui label">h<sub>c</sub>, in</div>
-                        <input name="hc" type="text" />
+                        <div class="ui label">M<sub>{{column}}</sub>, kips-in</div>
+                        <input :name="'M' + column" type="text" @change="updateValue($event, 'M' + column)"/>
+                    </div>
+                </div>
+            </div>
+            <div class="two fields" v-for="column in columns" :key="column + 2">
+                <div class="field">
+                    <div class="ui labeled input">
+                        <div class="ui label">N<sub>{{column}}</sub>, kips</div>
+                        <input :name="'N' + column" type="text" @change="updateValue($event, 'N' + column)" />
                     </div>
                 </div>
             </div>
@@ -167,27 +182,22 @@ export function loadsMenu() {
 
 export function resultsMenu() {
     const component_options = {
+        data: function () {
+            return {
+                results: []
+            }
+        },
         template: `
         <div>
-            <div class="two fields">
-                <div class="field">
-                    <div class="ui labeled input">
-                        <div class="ui label">f'c, ksi</div>
-                        <input type="text" />
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="ui labeled input">
-                        <div class="ui label">fy, ksi</div>
-                        <input type="text" />
-                    </div>
-                </div>
-                </div>
-                <div class="ui centered grid">
-                <div class="row">
-                    <button class="ui black button">Extract Geometry from S3D</button>
-                </div>
+            <div v-if="results.length > 0" class="ui relaxed divided list">
+                <slot></slot>
+                <result_comp :results="results" :key="index"/>
             </div>
+            <div v-else class="ui centered grid" style="min-height: 80px; padding-top: 20px">
+                <div class="row">
+                   <h4>Results not yet available</h4>
+                </div>
+            </div> 
         </div>
         `
     }

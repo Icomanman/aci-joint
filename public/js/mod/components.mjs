@@ -1,6 +1,13 @@
 import { upperCase } from "./helpers.mjs";
 import { detailsMenu, loadsMenu, resultsMenu } from "./views/views.mjs";
 
+function resultsComponent() {
+    const component_options = {
+
+    };
+    return component_options;
+}
+
 export function navMenu(menu_name, classes) {
     // nav menu item entry component
     const component_options = {
