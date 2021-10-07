@@ -21,13 +21,14 @@
    </head>
 
    <body>
-      <main class="ui grid">
+      <main id="app" class="ui grid">
          <div class="six wide column">
-            <nav id="main-menu" class="ui large three item pointing menu">
+            <nav_menu />
+            <!-- <nav id="main-menu" class="ui large three item pointing menu">
                <a class="item active">Details</a>
                <a class="item">Loads</a>
                <a class="item">Results</a>
-            </nav>
+            </nav> -->
             <div id="details-menu" class="ui segment">
                <form class="ui form" onsubmit="return false">
                   <div class="field">
@@ -152,5 +153,8 @@
          </div>
       </main>
    </body>
+   <script src="/js/vue.js" type="text/javascript"></script>
    <script src="/js/main.js" type="text/javascript"></script>
+   <script src="/js/app.js" type="text/javascript"></script>
+   <script src="/js/mod/loader.mjs" type="module"></script>
 </html>
