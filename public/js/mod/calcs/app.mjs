@@ -39,7 +39,7 @@ export function main(input) {
     const { bc, hc, b1, b2, b3, h1, h2, h3 } = details;
     const { joint_type, column_type } = details;
     const col_width = bc;
-    debugger;
+
     let beam_width = b3; // default to normal beam (1 & 2 are parallel pairs, so are 3 & 4)
     const min_beam_depth = Math.min(h1, h2, h3);
     const max_beam_depth = Math.max(h1, h2, h3);

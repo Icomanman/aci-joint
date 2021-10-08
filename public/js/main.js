@@ -9,8 +9,7 @@ const ACI = (function () {
         loads: {},
         results: {}
     };
-    j.joint_no = null;
-    j.model_name = null;
+    j.joint_data = {};
     j.nav_items = ['details', 'loads', 'results'];
     j.results = [];
     j.structure = null;
