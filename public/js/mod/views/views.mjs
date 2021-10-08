@@ -12,7 +12,8 @@ export function detailsMenu() {
                 column_type: dat.column_type,
                 fc: dat.fc,
                 fy: dat.fy,
-                beams: dat.beams
+                beams: dat.beams,
+                button_loading: false
             }
         },
         methods: {
@@ -23,6 +24,12 @@ export function detailsMenu() {
                     this.beams = val === 'ext' ? [1, 2, 3] : [1, 2, 3, 4];
                     dat.beams = this.beams;
                 }
+            },
+            getModel: async function () {
+                this.button_loading = true;
+                const response = await ACI.callAPI('joint-api-21');
+                console.log(response);
+                this.button_loading = false;
             }
         },
         template: `
@@ -90,7 +97,7 @@ export function detailsMenu() {
                     </div>
                 </div>
                 <div class="row">
-                    <button class="ui black button">Extract Geometry from S3D</button>
+                    <button class="ui black button" :class="{ loading : button_loading }" @click="getModel">Extract Geometry from S3D</button>
                 </div>
             </div>
 
@@ -144,13 +151,20 @@ export function loadsMenu() {
         },
         data: function () {
             return {
-                columns: [3, 4] // default, top and bottom
+                columns: [3, 4], // default, top and bottom
+                button_loading: false
             }
         },
         methods: {
             updateValue: function (evt, key) {
                 const val = evt.target.value;
                 dat[key] = isNaN(Number(val)) ? val : parseFloat(val);
+            },
+            getModel: async function () {
+                this.button_loading = true;
+                const response = await ACI.callAPI('joint-api-21', true);
+                console.log(response);
+                this.button_loading = false;
             }
         },
         props: { shared: Object },
@@ -158,7 +172,7 @@ export function loadsMenu() {
         <div> 
             <div class="ui centered grid">
                 <div class="row">
-                    <button class="ui black button">Extract Loads from S3D</button>
+                    <button class="ui black button" :class="{ loading : button_loading }" @click="getModel">Extract Loads from S3D</button>
                 </div>
             </div>
             <div class="ui horizontal divider">Or</div>
