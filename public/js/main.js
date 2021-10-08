@@ -11,7 +11,7 @@ const ACI = (function () {
     };
     j.joint_data = {};
     j.nav_items = ['details', 'loads', 'results'];
-    j.results = [];
+    j.results = {};
     j.structure = null;
     j.loads = null;
     return j;

@@ -1,7 +1,7 @@
 
-const extractionModal = callback => {
+const extractionModal = (id, callback) => {
     const page = jQuery('#app').append(`
-    <div class="ui tiny modal">
+    <div id="${id}" class="ui tiny modal">
         <div class="header">Select model and joint</div>
         <div class="content centered">
             <div class="ui form">
@@ -70,12 +70,12 @@ const extractionModal = callback => {
         jQuery('#optional-beam').hide();
     }
     setTimeout(() => {
-        jQuery('.tiny.modal').modal('show');
+        jQuery(`#${id}`).modal('show');
     }, 50);
 
     jQuery('#ok-btn').bind('click', () => {
         let empty = true;
-        jQuery('.tiny.modal input').each(function () {
+        jQuery(`#${id} input`).each(function () {
             let name = jQuery(this).attr('name');
             let text = jQuery(this).val();
             if (text === '') {
@@ -88,7 +88,7 @@ const extractionModal = callback => {
             }
         });
         if (!empty) {
-            jQuery('.tiny.modal').modal('hide');
+            jQuery(`#${id}`).modal('hide');
             callback(ACI.joint_data.model, ACI.joint_data.joint);
         };
     })
@@ -179,7 +179,7 @@ export function detailsMenu() {
                 }
             },
             getModel: async function () {
-                extractionModal(async (model_name, joint_no) => {
+                extractionModal('geometry', async (model_name, joint_no) => {
                     this.button_loading = true;
                     const api_results = await ACI.callAPI(model_name);
                     const err = ACI.chkAPIResults(api_results)
@@ -358,7 +358,7 @@ export function loadsMenu() {
                 dat[key] = isNaN(Number(val)) ? val : parseFloat(val);
             },
             solveModel: async function () {
-                extractionModal(async (model_name, joint_no) => {
+                extractionModal('loads', async (model_name, joint_no) => {
                     this.button_loading = true;
                     const api_results = await ACI.callAPI(model_name, true);
                     const err = ACI.chkAPIResults(api_results)
@@ -385,9 +385,9 @@ export function loadsMenu() {
                     const moments = {};
                     const axials = {};
                     (joint_loads.V).forEach((V, i) => shears[`V${i + 1}`] = V);
-                    (joint_loads.M).forEach((M, j) => moments[`M${i + 1}`] = M);
-                    (joint_loads.N).forEach((N, k) => axials[`N${i + 1}`] = N);
-                    Object.assign(ACI.UI.data.details,
+                    (joint_loads.M).forEach((M, j) => moments[`M${j + 1}`] = M);
+                    (joint_loads.N).forEach((N, k) => axials[`N${k + 1}`] = N);
+                    Object.assign(ACI.UI.data.loads,
                         {
                             ...shears,
                             ...moments,
@@ -455,23 +455,58 @@ export function resultsMenu() {
     const component_options = {
         data: function () {
             return {
-                results: []
+                passed: false,
+                results: {},
+                results_ready: false
+            }
+        },
+        filters: {
+            roundOff: function (number) {
+                return number.toFixed(3);
             }
         },
         methods: {
             runCalcs: function () {
                 const results = ACI.calcs(ACI.UI.data);
                 if (results) {
-                    Object.assign(ACI.results, { ...results });
-                    this.results.push(results);
+                    this.results = results;
+                    this.passed = results.passed;
+                    this.results_ready = true;
                 }
             }
         },
         template: `
         <div>
-            <div v-if="results.length > 0" class="ui relaxed divided list">
-                <slot></slot>
-                <result_comp :results="results" :key="index"/>
+            <div v-if="results_ready" class="ui relaxed divided list">
+                <div class="item">
+                    <h4>ACI Joint Shear Check</h4>
+                </div>
+                <div class="item">
+                    <div class="description">
+                        Reduction Factor:
+                    </div>
+                    <p class="header">&phi; = {{results.PHI}}</p>
+                </div>
+                <div class="item">
+                    <div class="description">
+                        Ultimate Shear Load:
+                    </div>
+                    <p class="header">V<sub>u</sub> = {{results.Vu}} kips</p>
+                </div>
+                <div class="item">
+                    <div class="right floated content">
+                        <div class="ui button" :class="passed ? 'green' : 'red'">
+                            {{ results.ratio | roundOff}}
+                        </div>
+                    </div>
+                    <i class="large middle aligned icon" :class="passed ? 'check circle green' : 'remove circle red'"></i>
+                    <div class="content">
+                        <div class="description">
+                            Ultimate Capacity: {{ results.PHI }} ({{ results.Vn | roundOff }}) kips
+                        </div>
+                        <p class="header"> &phi;V<sub>n</sub> = {{ results.capacity | roundOff}} kips</p>
+                    </div>
+                </div>
             </div>
             <div v-else class="ui centered grid" style="min-height: 80px; padding-top: px">
                 <div class="row">

@@ -24,7 +24,6 @@ const gamma = [
         }
     }
 ];
-const joints = { int: 4, ext: 2 };
 
 export function main(input) {
     // No provision for interior joints yet: 07 Oct 2021
@@ -52,10 +51,13 @@ export function main(input) {
     const m = ecc.forEach(e => e > (beam_width / 8) ? 0.3 : 0.5);
 
     const { V1, V2, V3, M1, M2, M3, N3, N4 } = loads;
-    const Vu = V3 - As3 * fy; // 3 is the normal beam (no opposite pair)
+    const Vu = Math.abs(V3 - As3 * fy); // 3 is the normal beam (no opposite pair)
     let bj = 0.5 * (beam_width + col_width);
     const gm = gamma[joint_type]['cont'][column_type];
     const Vn = gm * bj * hc * Math.sqrt(fc * 1000) / 1000;
-    Object.assign(results, { Vn, Vu, PHI });
+    const capacity = PHI * Vn;
+    const ratio = Math.abs(Vu / capacity);
+    const passed = ratio < 1 ? true : false;
+    Object.assign(results, { Vn, Vu, ratio, PHI, passed, gm, capacity, bj });
     return results;
 }
