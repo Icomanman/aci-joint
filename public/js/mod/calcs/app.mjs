@@ -29,7 +29,7 @@ const joints = { int: 4, ext: 2 };
 export function main(input) {
     // No provision for interior joints yet: 07 Oct 2021
 
-    if (Object.keys(input.details).length < 16 || Object.keys(input.details).length < 10) {
+    if (Object.keys(input.details).length < 16 || Object.keys(input.loads).length < 10) {
         SKYCIV_UTILS.alert('Sorry, you have incomplete input!');
         return null;
     }

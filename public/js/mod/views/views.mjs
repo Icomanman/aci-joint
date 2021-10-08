@@ -120,26 +120,24 @@ const processLoads = (load_obj, joint_loads, beams, plane = 1) => {
     const shear_dir = beam_plane[plane] === 'xy' ? 'shear_force_z' : 'shear_force_y';
     const moment_dir = beam_plane[plane] === 'xy' ? 'bending_moment_z' : 'bending_moment_y';
     const col_id = ACI.joint_data.topcol;
-    const beam_ids = beams.map((beam, i) => ACI.joint_data[`b${[i + 1]}`]);
-    joint_loads = beam_ids.map(id => {
-        return {
-            V: load_obj[0].member_forces.shear_force_y[id],
-            M: load_obj[0].member_forces.bending_moment_z[id],
-            N: load_obj[0].member_forces.axial_force[id],
-        }
-    });
-    const column_loads = {
-        V: load_obj[0].member_forces[shear_dir][col_id],
-        M: load_obj[0].member_forces[moment_dir][col_id],
-        N: load_obj[0].member_forces.axial_force[col_id],
-    }
-    // debugger;
-    if ((joint_loads.column.V) == undefined) {
-        return 'Column member not found.';
-    } else if ((joint_loads.beams).filter(load => load.V == undefined)) {
-        return 'Beam member not found.'
+    let beam_ids = beams.map((beam, i) => ACI.joint_data[`b${[i + 1]}`]);
+    beam_ids = beam_ids.filter(id => id != 0);
+
+    const col_ids = [];
+    col_ids.push(beam_ids.pop(), col_id);
+    // beam forces:
+    joint_loads.V = beam_ids.map(id => load_obj[0].member_forces.shear_force_y[id]['0.0']);
+    joint_loads.M = beam_ids.map(id => load_obj[0].member_forces.bending_moment_z[id]['0.0']);
+    joint_loads.N = beam_ids.map(id => load_obj[0].member_forces.axial_force[id]['0.0']);
+    // add the column forces:
+    joint_loads.V = (joint_loads.V).concat(col_ids.map(id => load_obj[0].member_forces[shear_dir][id]['0.0']));
+    joint_loads.M = (joint_loads.M).concat(col_ids.map(id => load_obj[0].member_forces[moment_dir][id]['0.0']));
+    joint_loads.N = (joint_loads.N).concat(col_ids.map(id => load_obj[0].member_forces.axial_force[id]['0.0']));
+
+    if ((joint_loads.V).filter(load => load == undefined).length > 0) {
+        return 'Member not found.';
     } else {
-        return column_loads;
+        return 0;
     }
 };
 
@@ -204,6 +202,18 @@ export function detailsMenu() {
                     this.h = beam_dims.h
                     this.bc = column_dims.b;
                     this.hc = column_dims.h;
+                    // update global data:
+                    const beam_widths = {};
+                    const beam_depths = {};
+                    (beam_dims.b).forEach((b, i) => beam_widths[`b${i + 1}`] = b);
+                    (beam_dims.h).forEach((h, j) => beam_depths[`h${j + 1}`] = h);
+                    Object.assign(ACI.UI.data.details,
+                        {
+                            ...beam_widths,
+                            ...beam_depths,
+                            bc: column_dims.b,
+                            hc: column_dims.h
+                        });
                 } else {
                     SKYCIV_UTILS.alert(err);
                 }
@@ -319,21 +329,22 @@ export function detailsMenu() {
 
 export function loadsMenu() {
     const dat = ACI.UI.data.loads;
-    const DET = ACI.UI.data.details;
+    const members = [1, 2, 3, 4]; // 2 beams, 2 columns
     let joint_loads = {
-        V: (DET.beams).map(b => ''),
-        M: (DET.beams).map(b => ''),
-        N: (DET.beams).map(b => '')
+        V: members.map(b => ''),
+        M: members.map(b => ''),
+        N: members.map(b => '')
     };
     const component_options = {
-        computed: {
-            beams: function () {
-                const beams_arr = (this.shared.details.beams).length == 4 ? [1, 2, 3, 4] : [1, 2];
-                return beams_arr;
-            }
-        },
+        // computed: {
+        //     beams: function () {
+        //         const beams_arr = (this.shared.details.beams).length == 4 ? [1, 2, 3, 4] : [1, 2];
+        //         return beams_arr;
+        //     }
+        // },
         data: function () {
             return {
+                beams: [1, 2],
                 columns: [3, 4], // default, top and bottom
                 button_loading: false,
                 V: joint_loads.V,
@@ -364,13 +375,24 @@ export function loadsMenu() {
             ACI.v_EVENT.$on('api-loads', response => {
                 console.log('> API analysis call sucessful.');
                 const load_obj = response.func[2].data;
-                const err = processLoads(load_obj, joint_loads, DET.beams, 2);
-                debugger;
-                if (typeof (err) === 'Object') {
+                const err = processLoads(load_obj, joint_loads, members, 2);
+                if (!err) {
                     this.V = joint_loads.V;
                     this.M = joint_loads.M
                     this.N = joint_loads.N;
-
+                    // update global data:
+                    const shears = {};
+                    const moments = {};
+                    const axials = {};
+                    (joint_loads.V).forEach((V, i) => shears[`V${i + 1}`] = V);
+                    (joint_loads.M).forEach((M, j) => moments[`M${i + 1}`] = M);
+                    (joint_loads.N).forEach((N, k) => axials[`N${i + 1}`] = N);
+                    Object.assign(ACI.UI.data.details,
+                        {
+                            ...shears,
+                            ...moments,
+                            ...axials
+                        });
                 } else {
                     SKYCIV_UTILS.alert(err);
                 }
@@ -386,40 +408,40 @@ export function loadsMenu() {
             </div>
             <div class="ui horizontal divider">Or</div>
             <h4 class="ui dividing header">Beam Loads</h4>
-            <div class="two fields" v-for="beam in beams" :key="beam">
+            <div class="two fields" v-for="(beam, j) in beams" :key="beam">
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">V<sub>{{beam}}</sub>, kips</div>
-                        <input :name="'V' + beam" type="text" @change="updateValue($event, 'V' + beam)" />
+                        <input :name="'V' + beam" type="text" v-model.lazy="V[j]" @change="updateValue($event, 'V' + beam)" />
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">M<sub>{{beam}}</sub>, kips-in</div>
-                        <input :name="'M' + beam" type="text" @change="updateValue($event, 'M' + beam)"/>
+                        <input :name="'M' + beam" type="text" v-model.lazy="M[j]" @change="updateValue($event, 'M' + beam)"/>
                     </div>
                 </div>
             </div>
             <h4 class="ui dividing header">Column Loads</h4>
-            <div class="two fields" v-for="column in columns" :key="column">
+            <div class="two fields" v-for="(column, k) in columns" :key="column">
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">V<sub>{{column}}</sub>, kips</div>
-                        <input :name="'V' + column" type="text" @change="updateValue($event, 'V' + column)" />
+                        <input :name="'V' + column" type="text" v-model.lazy="V[k + 2]" @change="updateValue($event, 'V' + column)" />
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">M<sub>{{column}}</sub>, kips-in</div>
-                        <input :name="'M' + column" type="text" @change="updateValue($event, 'M' + column)"/>
+                        <input :name="'M' + column" type="text" v-model.lazy="M[k + 2]" @change="updateValue($event, 'M' + column)"/>
                     </div>
                 </div>
             </div>
-            <div class="two fields" v-for="column in columns" :key="column + 2">
+            <div class="two fields" v-for="(column, l) in columns" :key="column + 2">
                 <div class="field">
                     <div class="ui labeled input">
                         <div class="ui label">N<sub>{{column}}</sub>, kips</div>
-                        <input :name="'N' + column" type="text" @change="updateValue($event, 'N' + column)" />
+                        <input :name="'N' + column" type="text" v-model.lazy="N[l + 2]" @change="updateValue($event, 'N' + column)" />
                     </div>
                 </div>
             </div>
