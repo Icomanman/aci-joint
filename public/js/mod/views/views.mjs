@@ -1,4 +1,54 @@
 
+const extractionModal = (callback) => {
+    const page = jQuery('#app').append(`
+    <div class="ui tiny modal">
+        <div class="header">Select model and joint</div>
+        <div class="content centered">
+            <div class="ui form">
+                <div class="two fields">
+                    <div class="field">
+                        <div class="ui labeled input">
+                            <div class="ui label">Model Name</div>
+                            <input type="text" name="model-name" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui labeled input">
+                            <div class="ui label">Joint No.</div>
+                            <input type="text" name="joint-no" />
+                        </div>
+                    </div>
+                </div> 
+                <div class="ui centered grid">
+                    <div class="row">
+                        <button id="ok-btn" class="ui button">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `);
+    setTimeout(() => {
+        jQuery('.tiny.modal').modal('show');
+    }, 50);
+
+    let model_name = jQuery('[name=model-name]').val();
+    let joint_no = jQuery('[name=joint-no]').val();
+
+    jQuery('#ok-btn').bind('click', () => {
+        model_name = jQuery('[name=model-name]').val();
+        joint_no = jQuery('[name=joint-no]').val();
+        if (model_name === '' || joint_no === '') SKYCIV_UTILS.alert('Fields cannot be empty.');
+        else {
+            ACI.model_name = model_name;
+            ACI.joint_no = joint_no;
+            jQuery('.tiny.modal').modal('hide');
+            callback(model_name, joint_no);
+        };
+    })
+
+};
+
 export function detailsMenu() {
     const dat = ACI.UI.data.details;
     // init
@@ -26,11 +76,24 @@ export function detailsMenu() {
                 }
             },
             getModel: async function () {
-                this.button_loading = true;
-                const response = await ACI.callAPI('joint-api-21');
-                console.log(response);
-                this.button_loading = false;
+                extractionModal(async (model_name, joint_no) => {
+                    this.button_loading = true;
+                    const api_results = await ACI.callAPI(model_name);
+                    const err = ACI.chkAPIResults(api_results)
+                    if (err) {
+                        SKYCIV_UTILS.alert(err);
+                    } else {
+                        ACI.v_EVENT.$emit('api-success', { func: api_results.functions, joint_no });
+                    }
+                    this.button_loading = false;
+                });
             }
+        },
+        mounted: function () {
+            ACI.v_EVENT.$on('api-success', response => {
+                console.log('> API call sucessful.');
+                console.log(response);
+            });
         },
         template: `
         <div>
@@ -160,11 +223,18 @@ export function loadsMenu() {
                 const val = evt.target.value;
                 dat[key] = isNaN(Number(val)) ? val : parseFloat(val);
             },
-            getModel: async function () {
-                this.button_loading = true;
-                const response = await ACI.callAPI('joint-api-21', true);
-                console.log(response);
-                this.button_loading = false;
+            solveModel: async function () {
+                extractionModal(async (model_name, joint_no) => {
+                    this.button_loading = true;
+                    const api_results = await ACI.callAPI(model_name, true);
+                    const err = ACI.chkAPIResults(api_results)
+                    if (err) {
+                        SKYCIV_UTILS.alert(err);
+                    } else {
+                        ACI.v_EVENT.$emit('api-success', { func: api_results.functions, joint_no });
+                    }
+                    this.button_loading = false;
+                });
             }
         },
         props: { shared: Object },
@@ -172,7 +242,7 @@ export function loadsMenu() {
         <div> 
             <div class="ui centered grid">
                 <div class="row">
-                    <button class="ui black button" :class="{ loading : button_loading }" @click="getModel">Extract Loads from S3D</button>
+                    <button class="ui black button" :class="{ loading : button_loading }" @click="solveModel">Extract Loads from S3D</button>
                 </div>
             </div>
             <div class="ui horizontal divider">Or</div>
@@ -230,8 +300,10 @@ export function resultsMenu() {
         methods: {
             runCalcs: function () {
                 const results = ACI.calcs(ACI.UI.data);
-                Object.assign(ACI.results, { ...results });
-                this.results.push(results);
+                if (results) {
+                    Object.assign(ACI.results, { ...results });
+                    this.results.push(results);
+                }
             }
         },
         template: `

@@ -28,11 +28,18 @@ const joints = { int: 4, ext: 2 };
 
 export function main(input) {
     // No provision for interior joints yet: 07 Oct 2021
+
+    if (Object.keys(input.details).length < 16 || Object.keys(input.details).length < 10) {
+        SKYCIV_UTILS.alert('Sorry, you have incomplete input!');
+        return null;
+    }
+
     const { details, loads, results } = input;
     const { fc, fy, As1, As2, As3 } = details;
     const { bc, hc, b1, b2, b3, h1, h2, h3 } = details;
     const { joint_type, column_type } = details;
     const col_width = bc;
+    debugger;
     let beam_width = b3; // default to normal beam (1 & 2 are parallel pairs, so are 3 & 4)
     const min_beam_depth = Math.min(h1, h2, h3);
     const max_beam_depth = Math.max(h1, h2, h3);

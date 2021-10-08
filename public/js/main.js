@@ -9,8 +9,12 @@ const ACI = (function () {
         loads: {},
         results: {}
     };
+    j.joint_no = null;
+    j.model_name = null;
     j.nav_items = ['details', 'loads', 'results'];
     j.results = [];
+    j.structure = null;
+    j.loads = null;
     return j;
 })();
 

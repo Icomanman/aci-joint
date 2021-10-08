@@ -4,6 +4,13 @@ const key = 'kVXkFhAkSngJCQs0omQFk0VpmWTuaXnQyow6m7VApEdSrmrMiqU0QMsJ5WYr6Pq5';
 
 const auth = { username: user, key };
 
+const err_msg = [
+    'Invalid API Call',
+    'Model not found',
+    'Unable to get model',
+    'Analysis Error'
+];
+
 const beginSession = (model_filename, to_analyse = false, keep_open = false) => {
     // options: keep session open (true); otherwise (false)
     const functions = [
@@ -31,6 +38,7 @@ const beginSession = (model_filename, to_analyse = false, keep_open = false) => 
                 "repair_model": true
             }
         };
+        functions.pop();
         functions.push(solve_clause);
     }
     return { auth, functions };
@@ -52,3 +60,19 @@ export async function callAPI(file, to_analyse = false) {
     });
     return response.json();
 };
+
+export function chkResults(results) {
+    let err = [];
+    try {
+        (results.functions).forEach((func, index) => {
+            if (func.status != 0) {
+                err.push(err_msg[index]);
+            }
+        });
+    } catch {
+        SKYCIV_UTILS.alert('SkyCiv API did not respond.');
+        err.push(err_msg[0]);
+    }
+    // return the first error:
+    return err.length > 0 ? err[0] : null;
+}
