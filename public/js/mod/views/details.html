@@ -1,0 +1,103 @@
+<div>
+   <div class="field">
+      <div class="ui labeled input">
+         <div class="ui label">Joint Type</div>
+         <select
+            disabled
+            name="joint-type"
+            id="joint-type"
+            class="ui dropdown"
+            v-model="joint_type"
+            @change="updateValue"
+         >
+            <option selected value="1">Type 1</option>
+            <option value="2">Type 2</option>
+         </select>
+      </div>
+   </div>
+   <div class="field">
+      <div class="ui labeled input">
+         <div class="ui label">Column Type</div>
+         <select
+            disabled
+            name="column-type"
+            id="column-type"
+            class="ui dropdown"
+            v-model="column_type"
+            @change="updateValue($event, 'column_type')"
+         >
+            <option selected value="int">Interior</option>
+            <option value="ext">Exterior</option>
+         </select>
+      </div>
+   </div>
+   <div class="two fields">
+      <div class="field">
+         <div class="ui labeled input">
+            <div class="ui label">f'c, ksi</div>
+            <input type="text" v-model.lazy="fc" @change="updateValue($event, 'fc')" />
+         </div>
+      </div>
+      <div class="field">
+         <div class="ui labeled input">
+            <div class="ui label">fy, ksi</div>
+            <input type="text" v-model.lazy="fy" @change="updateValue($event, 'fy')" />
+         </div>
+      </div>
+   </div>
+
+   <h4 class="ui dividing header">Beam Reinforcements</h4>
+   <div class="ui centered grid">
+      <div class="two column row">
+         <div class="column">
+            <div v-for="beam in beams" :key="'As-' + beam">
+               <div class="fields">
+                  <div class="ui labeled input">
+                     <div class="ui label">A<sub>s{{beam}}</sub>, in<sup>2</sup></div>
+                     <input :name="'As' + beam" type="text" @change="updateValue($event, 'As' + beam)" />
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="column" style="padding-left: 23%">
+            <img class="ui tiny image" src="/img/beam-sec.jpg" />
+         </div>
+      </div>
+      <div class="row">
+         <button class="ui black button">Extract Geometry from S3D</button>
+      </div>
+   </div>
+
+   <div class="ui horizontal divider">Or</div>
+
+   <h4 class="ui dividing header">Beam Dimensions</h4>
+   <div class="two fields" v-for="beam in beams" :key="beam">
+      <div class="field">
+         <div class="ui labeled input">
+            <div class="ui label">b<sub>{{beam}}</sub>, in</div>
+            <input :name="'b' + beam" type="text" @change="updateValue($event, 'b' + beam)" />
+         </div>
+      </div>
+      <div class="field">
+         <div class="ui labeled input">
+            <div class="ui label">h<sub>{{beam}}</sub>, in</div>
+            <input :name="'h' + beam" type="text" @change="updateValue($event, 'h' + beam)" />
+         </div>
+      </div>
+   </div>
+   <h4 class="ui dividing header">Column Dimensions</h4>
+   <div class="two fields">
+      <div class="field">
+         <div class="ui labeled input">
+            <div class="ui label">b<sub>c</sub>, in</div>
+            <input name="bc" type="text" @change="updateValue($event, 'bc')" />
+         </div>
+      </div>
+      <div class="field">
+         <div class="ui labeled input">
+            <div class="ui label">h<sub>c</sub>, in</div>
+            <input name="hc" type="text" @change="updateValue($event, 'hc')" />
+         </div>
+      </div>
+   </div>
+</div>
