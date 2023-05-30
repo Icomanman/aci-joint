@@ -280,7 +280,7 @@ export function detailsMenu() {
                         </div>
                     </div>
                     <div class="column" style="padding-left: 23%">
-                        <img class="ui tiny image" src="/img/beam-sec.jpg" />
+                        <img class="ui tiny image" src="./../../img/beam-sec.jpg" />
                     </div>
                 </div>
                 <div class="row">
